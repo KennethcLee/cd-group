@@ -1,3 +1,5 @@
+from flask_app.controllers import messagings
+
 from flask_app import app
 
 if __name__ == '__main__':

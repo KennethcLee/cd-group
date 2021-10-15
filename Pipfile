@@ -8,6 +8,9 @@ flask = "*"
 requests = "*"
 pymysql = "*"
 flask-bcrypt = "*"
+cryptography = "*"
+jsonify = "*"
+twilio = "*"
 
 [dev-packages]
 
