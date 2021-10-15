@@ -8,6 +8,9 @@ flask = "*"
 requests = "*"
 pymysql = "*"
 flask-bcrypt = "*"
+js2py = "*"
+schedule = "*"
+apscheduler = "*"
 
 [dev-packages]
 
