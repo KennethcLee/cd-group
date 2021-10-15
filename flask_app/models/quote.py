@@ -1,7 +1,8 @@
 from datetime import date
+
+from flask.globals import request
 from flask_app.config.mysqlconnection import connectToMySQL
 from flask import jsonify
-#Requests requires to install Request
 import requests
 import random
 
@@ -22,7 +23,7 @@ class Quote:
         number = random.randint(1,1642)
         data = {'user_id':user_id}
         
-        query = "SELECT quote_id FROM users_received_quotes WHERE user_id = %(user_id)s"
+        query = "SELECT quote_id FROM users_received_quotes WHERE user_id = %(user_id)s;"
         results = connectToMySQL(db).query_db(query,data)
         
         for result in results:
@@ -42,6 +43,15 @@ class Quote:
         query = 'INSERT INTO users_received_quotes(user_id,quote_id) VALUES (%(user_id)s,%(quote_id)s)'
         connectToMySQL(db).query_db(query,data)
         return quote[0] 
+
+    @staticmethod
+    #gets one time quote
+    def one_time_quote():
+        number = random.randint(1,1642)
+        data = {'quote_id':number}
+        query = 'SELECT text FROM quotes WHERE id = %(quote_id)s;' 
+        results = connectToMySQL(db).query_db(query,data)
+        return results
 
     @staticmethod
     #Checks quotes DB and fills if empty

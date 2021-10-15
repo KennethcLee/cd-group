@@ -1,0 +1,8 @@
+flask
+requests
+pymysql
+flask-bcrypt
+apscheduler
+cryptography
+jsonify
+twilio

@@ -5,7 +5,7 @@ from flask_app.models.user import User
 
 
 
-
+#for testing only
 @app.route('/')
 def load_homepage():
     return render_template('test.html')
