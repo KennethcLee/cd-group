@@ -1,3 +1,5 @@
+from flask_app.controllers import messagings
+
 from flask_app import app
 from flask_app.controllers import quotes 
 from apscheduler.schedulers.background import BackgroundScheduler
