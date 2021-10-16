@@ -20,8 +20,11 @@ def text_quote():
             'phone': recipient['phone_number'],
             'message': quote['text']
         }
-        print(data)
-        # WE WILL NEED TO INCORPORATE TEXT MESSAGING HERE
+        results = Messaging.send_sms(data)
+        if results:
+            print('Message Sent')
+        else:
+            print('***  100B  ***', results) 
 
 
 scheduler = BackgroundScheduler()

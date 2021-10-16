@@ -1,8 +1,8 @@
-flask
-requests
-pymysql
-flask-bcrypt
-apscheduler
-cryptography
-jsonify
+flask,
+requests,
+pymysql,
+flask-bcrypt,
+apscheduler,
+cryptography,
+jsonify,
 twilio

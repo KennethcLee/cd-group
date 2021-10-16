@@ -3,7 +3,7 @@ from flask_app.config.mysqlconnection import connectToMySQL
 from flask import flash
 import re
 
-phone_regex = "\w{3}-\w{3}-\w{4}"
+phone_regex = "\w{10}"
 name_regex = re.compile(r'^[a-zA-Z]+$')
 
 db = 'motivational_app'
@@ -121,7 +121,7 @@ class User:
         if not name_regex.match(data['full_name']):
             flash("Full name must only be letters.")
             is_valid = False
-        if not phone_regex.match(data['phone_number']):
+        if len(data['phone_number']) != 10:
             flash('Please use a valid phone number.')
             is_valid = False
         if data['password'] == False:

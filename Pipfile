@@ -4,14 +4,14 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flask = "*"
 requests = "*"
-pymysql = "*"
-flask-bcrypt = "*"
-apscheduler = "*"
 cryptography = "*"
 jsonify = "*"
 twilio = "*"
+Flask = "*"
+PyMySQL = "*"
+Flask-Bcrypt = "*"
+APScheduler = "*"
 
 [dev-packages]
 
