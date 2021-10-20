@@ -1,0 +1,27 @@
+<form action= "/login" method= "POST">
+    <p>Phone Number: </p>
+    <input type = "text" name = "phone_num">
+    <p>Password: </p>
+    <input type = "password" name = "password">
+    <input type = "submit" value = "Login">
+</form>
+
+<form action= "/register_user" method= "POST">
+    <label name = "name">Full Name: </label>
+    <input type = "text" name = "name">
+    <label name = "phone_num">Phone Number: </label>
+    <input type = "text" name = "phone_num">
+    <label name = "password">Password: </label>
+    <input type = "password" name = "password">
+    <label name = "password_confirm">Confirm Password: </label>
+    <input type = "password" name = "password_confirm">
+    <input type = "submit" value = "Register">
+</form>
+
+{% with messages = get_flashed_messages() %}     <!-- declare a variable called messages -->
+    {% if messages %}                            <!-- check if there are any messages -->
+        {% for message in messages %}            <!-- loop through the messages -->
+            <p>{{message}}</p>                   <!-- display each message in a paragraph tag -->
+        {% endfor %}
+    {% endif %}
+{% endwith %}

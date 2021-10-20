@@ -4,7 +4,7 @@ from flask import flash
 import re
 
 phone_regex = "\w{10}"
-name_regex = re.compile(r'^[a-zA-Z]+$')
+name_regex = re.compile(r'^[a-zA-Z_\s-]+$')
 
 db = 'motivational_app'
 
@@ -15,6 +15,7 @@ class User:
         self.phone_number = data['phone_number']
         self.password = data['password']
         self.requested_time = data['requested_time']
+        self.time_zone = data['time_zone']
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
         self.previous_quotes = []
@@ -52,7 +53,7 @@ class User:
 
     @classmethod
     #Gets a user and all quotes they have previously received
-    def get_user(data):
+    def get_user(cls,data):
         query = 'SELECT * FROM users WHERE phone_number = %(phone_number)s' 
         user_results =  connectToMySQL(db).query_db(query,data)
         for user_result in user_results:
@@ -61,35 +62,42 @@ class User:
                 'full_name': user_result['full_name'],
                 'phone_number' : user_result['phone_number'],
                 'password': user_result['password'],
+                'time_zone': user_result['time_zone'],
                 'requested_time': user_result['requested_time'],
                 'created_at': user_result['created_at'],
                 'updated_at': user_result['updated_at']
             }
-            user = User(user_data)
-        query = 'SELECT * FROM users_recieved_quotes WHERE user_id = %(user_id)s'
+        user = User(user_data)
+        if user.requested_time:
+            user.requested_time = User.revert_time(user.requested_time,user.time_zone)
+        query = 'SELECT * FROM users_received_quotes WHERE user_id = %(user_id)s ORDER BY id DESC LIMIT 5;'
         data = {'user_id': user.id }
         quotes_results = connectToMySQL(db).query_db(query,data)
         for quote_result in quotes_results:
-            user.previous_quotes.append(quote_result['quote_id'])
+            query = "SELECT * FROM quotes WHERE id = %(quote_id)s;"
+            data = {'quote_id': quote_result['quote_id']}
+            q_results = connectToMySQL(db).query_db(query,data)
+            for q_result in q_results:
+                user.previous_quotes.append(q_result)
         return user
 
     @classmethod
     #Schedules reoccuring text time
     def schedule_request_time(cls, data):
-        query = 'UPDATE users SET requested_time = %(requested_time)s WHERE id = %(user_id)s:'
+        query = 'UPDATE users SET requested_time = %(requested_time)s, time_zone = %(time_zone)s WHERE id = %(user_id)s;'
         return connectToMySQL(db).query_db(query,data)
 
     @classmethod
     #Removes reoccuring text time
     def cancel_request_time(cls, data):
-        query = 'UPDATE users SET requested_time = NULL WHERE id = %(user_id)s;'
+        query = 'UPDATE users SET requested_time = NULL, time_zone = NULL WHERE id = %(user_id)s;'
         return connectToMySQL(db).query_db(query,data)
 
     @staticmethod
-    #Validates that a phone number is in the ###-###-#### format
+    #Validates that a phone number is 12 digits
     def login_validation(phone_number):
         is_valid = True
-        if not phone_regex.match(phone_number):
+        if len(phone_number) != 12:
             is_valid = False
         return is_valid
 
@@ -115,15 +123,74 @@ class User:
             flash('This phone number is already registered.')
             is_valid = False
             return is_valid
-        if len(data['full_name'] < 4):
+        if len(data['full_name']) < 4:
             flash('Full name must be at least 4 letters long.')
             is_valid = False
         if not name_regex.match(data['full_name']):
             flash("Full name must only be letters.")
             is_valid = False
-        if len(data['phone_number']) != 10:
-            flash('Please use a valid phone number.')
+        if len(data['phone_number']) != 12:
+            flash('Invalid phone number format. Use 10 digit number with no dashes or spaces. EX: 5463541234')
             is_valid = False
         if data['password'] == False:
             is_valid = False
         return is_valid
+
+    @staticmethod
+    def convert_time(time,timeZone):
+        hour = time[0]+time[1]
+        min = time[3]+time[4]
+        if timeZone == 'eastern':
+            hour = int(hour)+ 4
+        if timeZone == 'central':
+            hour = int(hour)+ 5
+        if timeZone == 'mountain':
+            hour = int(hour)+ 6
+        if timeZone == 'pacific':
+            hour = int(hour)+ 7
+        if timeZone == 'alaskan':
+            hour = int(hour)+ 8
+        if timeZone == 'hawaiian':
+            hour = int(hour)+ 10
+        if hour > 24:
+            hour -= 24
+        time = f'{hour}:{min}:00'
+        
+        return time
+
+    @staticmethod
+    def revert_time(time,time_zone):
+        time = str(time)
+        if len(time) == 8:
+            hour = time[0]+time[1]
+            min = str(time[3])+str(time[4])
+        else:
+            hour = time[0]
+            min = str(time[2])+str(time[3])
+        hour = int(hour)
+        if time_zone == 'eastern':
+            hour = hour - 4
+        if time_zone == 'central':
+            hour = hour - 5
+        if time_zone == 'mountain':
+            hour = hour - 6
+        if time_zone == 'pacific':
+            hour = hour - 7
+        if time_zone == 'alaskan':
+            hour = hour - 8
+        if time_zone == 'hawaiian':
+            hour = hour - 10
+        if hour < 1:
+            hour+=24
+        if hour == 24:
+            hour -= 12
+            time = f'{hour}:{min} AM'
+        if hour > 12:
+            hour -= 12
+            time = f'{hour}:{min} PM'
+        else: 
+            time = f'{hour}:{min} AM'
+        return time
+
+
+

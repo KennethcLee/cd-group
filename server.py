@@ -1,7 +1,7 @@
 from flask_app.controllers import messagings
 
 from flask_app import app
-from flask_app.controllers import quotes 
+from flask_app.controllers import users 
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_app.models.quote import Quote
 from flask_app.models.messaging import Messaging

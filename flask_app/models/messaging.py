@@ -28,6 +28,4 @@ class Messaging:
             body=data['message']
         )
         print('message created')
-        print(message)
-
         return(message.sid)

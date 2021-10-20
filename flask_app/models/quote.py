@@ -49,9 +49,10 @@ class Quote:
     def one_time_quote():
         number = random.randint(1,1642)
         data = {'quote_id':number}
-        query = 'SELECT text FROM quotes WHERE id = %(quote_id)s;' 
+        query = 'SELECT * FROM quotes WHERE id = %(quote_id)s;' 
         results = connectToMySQL(db).query_db(query,data)
-        return results
+        result = results[0]['text']
+        return result
 
     @staticmethod
     #Checks quotes DB and fills if empty

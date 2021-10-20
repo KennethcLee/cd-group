@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <link rel="stylesheet", type='text/css',  href= "{{ url_for('static', filename='css/styles.css') }}">
+    <title>Dashboard</title>
+</head>
+<body>
+    <div id="base">
+        <div id="content">
+            <h1 class="app_name">MOTIVATE!</h1>
+            <div class="register-body">
+                <h2>Welcome {{user.full_name}}!</h2>
+                {% if user.requested_time %}
+                    <h3 class=>You are set to be motivated at: {{user.requested_time}}</h3>
+                {% endif %}
+                <form id="set_request_time" action= "/set_requested_time" method = "POST">
+                    <label name = "time">Set New Time: </label>
+                    <input type = "time" name = "time">
+                    <label name='time-zone'>Select Time Zone:</label>
+                    <select name="time-zone" class="custom-select" placeholder="Time Zone">
+                        <option value="eastern">Eastern</option>
+                        <option value="central">Central</option>
+                        <option value="mountain">Mountain</option>
+                        <option value="pacific">Pacific</option>
+                        <option value="alaskan">Alaskan</option>
+                        <option value="hawaiian">Hawaiian</option>
+                    </select>
+                    <input class="btn btn-dark" type = "submit" value = "Set Time"> 
+                </form>
+                <div id="control-buttons" style="margin: 25px;">
+                    <a href = "/one_time_quote" class="btn btn-dark">One Time Quote</a>
+                    <a href = "/cancel_requested_time" class="btn btn-dark">Unsubscribe</a>
+                    <a href = "/logout" class="btn btn-dark">Logout</a>
+                </div>
+            </div>
+            {% if user.previous_quotes %}
+                <h2>Recent Motivation:</h2>
+                <div id="quote-table" class="w-75 mx-auto">
+                    <table class="table table-striped table-dark ">
+                        <thead>
+                            <tr>
+                                <th scope="col">Author</th>
+                                <th scope="col">Quote</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                                {% for quote in user.previous_quotes %}
+                                    <tr>
+                                        {% if quote.author == null %}
+                                            <td scope="row">Unknown</td>
+                                        {% else %}
+                                            <td scope="row">{{quote.author}}</td>
+                                        {% endif %}
+                                        <td>{{quote.text}}</td>
+                                    </tr>
+                                {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
+
+
+
