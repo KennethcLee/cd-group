@@ -152,7 +152,7 @@ class User:
             hour = int(hour)+ 8
         if timeZone == 'hawaiian':
             hour = int(hour)+ 10
-        if hour > 24:
+        if hour >= 24:
             hour -= 24
         time = f'{hour}:{min}:00'
         
